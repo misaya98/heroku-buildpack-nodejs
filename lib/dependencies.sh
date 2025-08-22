@@ -299,12 +299,12 @@ npm_prune_devdependencies() {
     meta_set "skipped_prune" "true"
     return 0
   elif [ "$npm_version" == "5.6.0" ] ||
-       [ "$npm_version" == "5.5.1" ] ||
-       [ "$npm_version" == "5.5.0" ] ||
-       [ "$npm_version" == "5.4.2" ] ||
-       [ "$npm_version" == "5.4.1" ] ||
-       [ "$npm_version" == "5.2.0" ] ||
-       [ "$npm_version" == "5.1.0" ]; then
+         [ "$npm_version" == "5.5.1" ] ||
+         [ "$npm_version" == "5.5.0" ] ||
+         [ "$npm_version" == "5.4.2" ] ||
+         [ "$npm_version" == "5.4.1" ] ||
+         [ "$npm_version" == "5.2.0" ] ||
+         [ "$npm_version" == "5.1.0" ]; then
     echo "Skipping because npm $npm_version sometimes fails when running 'npm prune' due to a known issue"
     echo "https://github.com/npm/npm/issues/19356"
     echo ""
@@ -326,7 +326,8 @@ pnpm_install() {
   echo "Running 'pnpm install' with pnpm-lock.yaml"
   cd "$build_dir" || return
 
-  monitor "install_dependencies" pnpm install --prod=false --frozen-lockfile 2>&1
+  # MODIFICATION: Replaced --frozen-lockfile with --no-frozen-lockfile
+  monitor "install_dependencies" pnpm install --prod=false --no-frozen-lockfile 2>&1
 
   # prune the store when the counter reaches zero to clean up errant package versions which may have been upgraded/removed
   counter=$(load_pnpm_prune_store_counter "$cache_dir")
@@ -371,8 +372,8 @@ pnpm_prune_devdependencies() {
   # so we should check if we're on that version + there are lifecycle scripts registered and, if so,
   # we'll let the user know that pruning can't be done safely so we're skipping it
   if (( "$pnpm_major_version" < 8 )) || \
-    (( "$pnpm_major_version" == 8 && "$pnpm_minor_version" < 15 )) || \
-    (( "$pnpm_major_version" == 8 && "$pnpm_minor_version" == 15 && "$pnpm_patch_version" < 6)); then
+     (( "$pnpm_major_version" == 8 && "$pnpm_minor_version" < 15 )) || \
+     (( "$pnpm_major_version" == 8 && "$pnpm_minor_version" == 15 && "$pnpm_patch_version" < 6)); then
       # the following are lifecycle scripts that will execute on install/prune by pnpm
       if [ -n "$(read_json "$build_dir/package.json" ".scripts.\"pnpm:devPreinstall\"")" ] ||
          [ -n "$(read_json "$build_dir/package.json" ".scripts.preinstall")" ] ||
