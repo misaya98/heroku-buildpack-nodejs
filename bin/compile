@@ -342,6 +342,12 @@ install_bins() {
   echo 'export PATH="$HOME/.heroku/bun/bin:$PATH"' >> "$BUILD_DIR/.profile.d/bun.sh"
   echo "       Installed Bun v$(bun --version)"
   # --- BUN INSTALLATION END ---
+
+# --- 新增的修复步骤 ---
+echo "       Creating symlink for bun in node bin directory..."
+# 在 Node.js 的 bin 目录中创建一个名为 bun 的符号链接，指向真实的 bun 可执行文件
+ln -s "$BUN_INSTALL/bin/bun" "$BUILD_DIR/.heroku/node/bin/bun"
+# --- BUN INSTALLATION END ---
 }
 
 header "Installing binaries" | output "$LOG_FILE"
