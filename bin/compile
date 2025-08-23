@@ -326,6 +326,22 @@ install_bins() {
   if [[ $YARN_2 == true ]]; then
     YARN=false
   fi
+
+  # --- BUN INSTALLATION START ---
+  echo ""
+  header "Installing Bun runtime"
+  local bun_install_dir="$BUILD_DIR/.heroku/bun"
+  mkdir -p "$bun_install_dir"
+  export BUN_INSTALL="$bun_install_dir"
+  # Use curl to install bun, the script will respect BUN_INSTALL
+  curl -fsSL https://bun.sh/install | bash
+  # Add bun to the path for subsequent commands in this script
+  export PATH="$BUN_INSTALL/bin:$PATH"
+  # Also add it to the profile for the runtime environment
+  mkdir -p "$BUILD_DIR/.profile.d"
+  echo 'export PATH="$HOME/.heroku/bun/bin:$PATH"' >> "$BUILD_DIR/.profile.d/bun.sh"
+  echo "       Installed Bun v$(bun --version)"
+  # --- BUN INSTALLATION END ---
 }
 
 header "Installing binaries" | output "$LOG_FILE"
